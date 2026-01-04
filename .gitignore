@@ -1,0 +1,65 @@
+# -------------------------
+# Python cache & artifacts
+# -------------------------
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.pkl
+*.egg-info/
+*.egg
+*.log
+
+# Bytecode cache inside tests, agent, server, common
+agent/__pycache__/
+server/__pycache__/
+common/__pycache__/
+tests/__pycache__/
+
+# -------------------------
+# Virtual environments
+# -------------------------
+venv/
+env/
+.venv/
+.python-version
+
+# -------------------------
+# OS-specific files
+# -------------------------
+.DS_Store
+Thumbs.db
+
+# -------------------------
+# Environment variables
+# -------------------------
+.env
+
+# -------------------------
+# SQLite database
+# -------------------------
+server/db.sqlite3
+
+# -------------------------
+# IDE / Editor settings
+# -------------------------
+.vscode/
+.idea/
+
+# -------------------------
+# Build / distribution
+# -------------------------
+dist/
+build/
+*.whl
+
+# -------------------------
+# Pytest cache
+# -------------------------
+.pytest_cache/
+
+# -------------------------
+# Uvicorn / FastAPI logs
+# -------------------------
+*.uvicorn.log

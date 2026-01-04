@@ -1,0 +1,42 @@
+MCP Database Analyst – Architecture Diagram
+===========================================
+
+                     ┌──────────────────────────┐
+                     │        User (CLI)        │
+                     │  Natural-language query   │
+                     │  e.g. "מה נמכר הכי הרבה" │
+                     └──────────────┬───────────┘
+                                    │
+                                    ▼
+                     ┌──────────────────────────┐
+                     │        AI Agent          │
+                     │  • Loads system prompt   │
+                     │  • Calls Groq LLM        │
+                     │  • Generates SQL         │
+                     │  • Self-corrects errors  │
+                     │  • Summarizes results    │
+                     └──────────────┬───────────┘
+                                    │
+                           HTTP (JSON Tools)
+                                    │
+                                    ▼
+    ┌──────────────────────────────────────────────────────────┐
+    │                   MCP-Style DB Server                    │
+    │                        (FastAPI)                         │
+    │----------------------------------------------------------│
+    │  Tool: list_tables()                                     │
+    │     → returns table names                                │
+    │                                                          │
+    │  Tool: run_sql_query(query)                              │
+    │     → validates read-only SQL                            │
+    │     → executes SELECT / WITH                             │
+    └──────────────┬───────────────────────────────────────────┘
+                   │
+                   ▼
+        ┌──────────────────────────────┐
+        │          SQLite DB           │
+        │         (db.sqlite3)         │
+        │------------------------------│
+        │  • products                  │
+        │  • orders                    │
+        └──────────────────────────────┘
