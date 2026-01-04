@@ -4,8 +4,8 @@ A minimal MCP‑style system consisting of two components:
 1. Read‑Only SQLite Server (FastAPI)
 
 Exposes two tools:
-list_tables()
-run_sql_query(query)
+list\_tables()
+run\_sql\_query(query)
 
 2. AI Agent (Groq LLM)
 
@@ -32,15 +32,15 @@ mcp-db-analyst/
 │
 ├── server/
 │ ├── server.py
-│ ├── init_db.py
+│ ├── init\_db.py
 │ ├── db.sqlite3
 │ └── requirements.txt
 │
 ├── tests/
-│ ├── test_agent_end_to_end.py
-│ ├── test_llm.py
-│ ├── test_readonly.py
-│ └── test_valid_queries.py
+│ ├── test\_agent\_end\_to\_end.py
+│ ├── test\_llm.py
+│ ├── test\_readonly.py
+│ └── test\_valid\_queries.py
 │
 ├── .env
 ├── architecture.txt
@@ -57,9 +57,9 @@ Groq API key (free)
 Create a .env file in the project root:
 
 Code
-GROQ_API_KEY=your_api_key_here
-GROQ_MODEL=llama-3.3-70b-versatile
-MCP_SERVER_URL=http://127.0.0.1:8000
+GROQ\_API\_KEY=your\_api\_key\_here
+GROQ\_MODEL=llama-3.3-70b-versatile
+MCP\_SERVER\_URL=http://127.0.0.1:8000
 Get your Groq API key at:
 https://console.groq.com
 
@@ -68,7 +68,7 @@ https://console.groq.com
 Inside the server/ folder:
 bash
 cd server
-python init_db.py
+python init\_db.py
 
 This creates db.sqlite3 with two tables:
 products
@@ -90,8 +90,8 @@ Expected output:
 Code
 Uvicorn running on http://127.0.0.1:8000
 The server exposes:
-GET /list_tables
-POST /run_sql_query
+GET /list\_tables
+POST /run\_sql\_query
 All SQL is validated as read‑only (SELECT / WITH only).
 🤖 Run the AI Agent
 Install agent dependencies:
@@ -173,3 +173,4 @@ Read‑only database protection
 Self‑correction loops
 Clear natural‑language explanations
 The system is fully functional and ready for submission.
+
