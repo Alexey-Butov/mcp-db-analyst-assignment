@@ -1,176 +1,256 @@
-MCP Database Analyst Agent
-A minimal MCP‑style system consisting of two components:
+\# MCP Database Analyst Agent
 
-1. Read‑Only SQLite Server (FastAPI)
 
-Exposes two tools:
-list\_tables()
-run\_sql\_query(query)
 
-2. AI Agent (Groq LLM)
+A minimal \*\*MCP-style\*\* natural-language database querying system with two separated components:
 
-The agent:
-Understands natural‑language questions (Hebrew or English)
-Discovers the database schema
-Generates SQL queries
-Executes them via the server
-Performs self‑correction on SQL errors
-Returns clear natural‑language answers
-This project demonstrates schema reasoning, SQL generation, error handling, and tool‑based interaction in an MCP‑style architecture.
 
-📂 Project Structure
-Code
-mcp-db-analyst/
-├── agent/
-│ ├── **init**.py
-│ ├── agent.py
-│ └── requirements.txt
-│
-├── common/
-│ ├── **init**.py
-│ └── prompts.py
-│
-├── server/
-│ ├── server.py
-│ ├── init\_db.py
-│ ├── db.sqlite3
-│ └── requirements.txt
-│
-├── tests/
-│ ├── test\_agent\_end\_to\_end.py
-│ ├── test\_llm.py
-│ ├── test\_readonly.py
-│ └── test\_valid\_queries.py
-│
-├── .env
-├── architecture.txt
-└── README.md
-⚙️ Installation
-Prerequisites
-Python 3.10+
 
-Internet connection (Groq API)
+1\. \*\*Read-only SQLite Server\*\* (FastAPI) – exposes secure tools for schema discovery and query execution  
 
-Groq API key (free)
+2\. \*\*AI Agent\*\* (Groq LLM) – understands questions in English or Hebrew, generates SQL, executes it safely, self-corrects errors, and returns clear answers
 
-🔑 Environment Setup
-Create a .env file in the project root:
 
-Code
-GROQ\_API\_KEY=your\_api\_key\_here
-GROQ\_MODEL=llama-3.3-70b-versatile
-MCP\_SERVER\_URL=http://127.0.0.1:8000
-Get your Groq API key at:
-https://console.groq.com
 
-🗄️ Initialize the SQLite Database
+This project demonstrates:
 
-Inside the server/ folder:
-bash
-cd server
-python init\_db.py
+\- Tool-based agent architecture (MCP-style)
 
-This creates db.sqlite3 with two tables:
-products
-orders
+\- Secure read-only database access
 
-and populates them with sample data.
+\- Schema discovery \& SQL generation
 
-🚀 Run the Read‑Only MCP‑Style Server
-Install dependencies:
+\- Self-correction on errors
 
-bash
-pip install -r server/requirements.txt
-Run the server:
+\- Bilingual support (Hebrew + English)
 
-bash
-python server/server.py
-Expected output:
+\- Clean separation of concerns
 
-Code
-Uvicorn running on http://127.0.0.1:8000
-The server exposes:
-GET /list\_tables
-POST /run\_sql\_query
-All SQL is validated as read‑only (SELECT / WITH only).
-🤖 Run the AI Agent
-Install agent dependencies:
+\- Comprehensive tests (18/18 passing)
 
-bash
+
+
+\## 📂 Project Structure
+
+mcp-db-analyst-assignment/
+
+├── src/                        # (optional modern layout – code moved here)
+
+│   ├── agent/
+
+│   │   ├── init.py
+
+│   │   ├── agent.py           # CLI entry point
+
+│   │   ├── llm\_client.py      # Groq LLM wrapper
+
+│   │   ├── mcp\_client.py      # HTTP client to server
+
+│   │   ├── agent\_loop.py      # Core reasoning + self-correction
+
+│   │   ├── ui.py              # Streamlit UI (bonus)
+
+│   │   └── requirements.txt
+
+│   ├── common/
+
+│   │   ├── init.py
+
+│   │   └── prompts.py         # System prompt
+
+│   ├── server/
+
+│   │   ├── server.py          # FastAPI read-only server
+
+│   │   ├── init\_db.py         # Creates \& seeds db.sqlite3
+
+│   │   └── requirements.txt
+
+│   └── tests/
+
+│       ├── test\_agent\_end\_to\_end.py
+
+│       ├── test\_llm.py
+
+│       ├── test\_readonly.py
+
+│       └── test\_valid\_queries.py
+
+├── pyproject.toml              # Package config \& pytest settings
+
+├── README.md
+
+├── .env                        # GROQ\_API\_KEY, etc.
+
+└── .gitignore
+
+text## ⚙️ Installation
+
+
+
+\### Prerequisites
+
+\- Python 3.9+
+
+\- Groq API key (free at https://console.groq.com/keys)
+
+
+
+\### Setup
+
+
+
+1\. Clone the repo and navigate to root:
+
+
+
+&nbsp;  ```bash
+
+&nbsp;  git clone https://github.com/Alexey-Butov/mcp-db-analyst-assignment.git
+
+&nbsp;  cd mcp-db-analyst-assignment
+
+
+
+(Recommended) Create \& activate a virtual environment:Bashpython -m venv venv
+
+venv\\Scripts\\activate    # Windows
+
+\# or source venv/bin/activate  # Linux/macOS
+
+Install the project in editable mode:Bashpip install -e .
+
 pip install -r agent/requirements.txt
-Run from project root (recommended)
-bash
-python agent/agent.py "מה המוצר הכי זול?"
-Run from inside the agent folder
-bash
-cd agent
-python agent.py "מה המוצר הכי זול?"
-Run as a module
-bash
-python -m agent.agent "מה המוצר הכי זול?"
 
-💬 Ask Natural‑Language Questions
-Examples:
-bash
-python agent/agent.py "מה המוצר הכי נמכר במאי?"
-python agent/agent.py "כמה הכנסות היו ביוני?"
-python agent/agent.py "תן לי את כל ההזמנות של חודש יולי"
+pip install -r server/requirements.txt
 
-The agent will:
-Fetch table list
-Inspect schema
-Generate SQL using Groq LLM
-Execute SQL via the server
-Self‑correct if needed
-Return a clear natural‑language answer
+pip install -r tests/requirements.txt   # for testing
 
-🔁 Self‑Correction Mechanism
-If SQL generated by the LLM fails:
-The agent captures the SQLite error
-Sends it back to the LLM
-Requests a corrected SQL query
-Retries up to 3 times
-If all attempts fail, the agent returns a clear explanation.
+Create .env in root:envGROQ\_API\_KEY=your\_groq\_api\_key\_here
 
-🧠 About common/prompts.py
-The system prompt defines:
+GROQ\_MODEL=llama-3.3-70b-versatile
 
-Read‑only SQL rules
-Workflow and tool usage
-Error‑handling behavior
-Output format
-This ensures consistent and safe SQL generation.
+MCP\_SERVER\_URL=http://127.0.0.1:8000
+
+
+
+🗄️ Initialize the Database
+
+Bashpython server/init\_db.py
+
+Creates server/db.sqlite3 with tables products and orders + sample data.
+
+🚀 Running the Components
+
+1\. Start the Read-Only Server
+
+Bashcd server
+
+uvicorn server:app --reload
+
+Endpoints:
+
+
+
+GET /list\_tables – list tables
+
+POST /run\_sql\_query – execute SELECT/WITH only
+
+GET /health – server \& DB health check
+
+
+
+2\. Run the AI Agent (CLI)
+
+From project root:
+
+Bashpython -m agent.agent "מה המוצר הכי נמכר במאי?"
+
+or
+
+Bashpython agent/agent.py "כמה הכנסות היו בחודש יוני?"
+
+3\. Run the Streamlit UI (Bonus)
+
+Bashstreamlit run agent/ui.py
+
+Opens browser at http://localhost:8501 – ask questions naturally.
 
 🧪 Running Tests
-The project includes:
-End‑to‑end agent tests
-LLM behavior tests
-SQL validity tests
-Read‑only enforcement tests
-Run the full suite:
 
-bash
-pytest tests/ -v
-Expected output:
+18 tests cover:
 
-Code
-10 passed in X.XXs
-🛠 Technologies Used
-Python
-FastAPI (server)
-SQLite (read‑only DB)
-Groq LLM
-python‑dotenv
-requests
-pytest
+
+
+End-to-end agent flow
+
+LLM connectivity \& instruction following
+
+Read-only enforcement
+
+Valid SQL execution
+
+
+
+Run from root (venv activated):
+
+Bashpytest -v
+
+Expected: 18 passed
+
+🔁 Self-Correction Mechanism
+
+If LLM-generated SQL fails:
+
+
+
+Error message is sent back to Groq
+
+LLM attempts correction
+
+Up to 3 retries
+
+Fallback message in Hebrew if all fail
+
+
+
+🛠 Technologies
+
+
+
+Backend: FastAPI, SQLite (read-only), Uvicorn
+
+AI: Groq (Llama-3.3-70b), python-dotenv, requests
+
+UI: Streamlit (optional)
+
+Testing: pytest
+
+Packaging: pyproject.toml + setuptools (pip install -e .)
+
+
 
 🎯 Summary
-This project demonstrates:
-MCP‑style tool architecture
-AI‑driven SQL generation
-Automatic schema discovery
-Read‑only database protection
-Self‑correction loops
-Clear natural‑language explanations
-The system is fully functional and ready for submission.
+
+This project fully implements the assignment requirements:
+
+
+
+MCP-style separation (server ↔ agent via HTTP tools)
+
+Read-only enforcement (server-side, not just prompt)
+
+Schema discovery \& SQL generation
+
+Self-correction loop
+
+Bilingual support
+
+Clean code, modular structure, comprehensive tests
+
+
+
+Ready for review. Feedback welcome!
+
+Made with ❤️ by Alexey Butov
 
