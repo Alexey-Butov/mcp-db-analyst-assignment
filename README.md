@@ -18,35 +18,64 @@ A minimal **MCP-style** natural-language database querying system with two separ
 ## Project Structure (src layout)
 
 mcp_db_analyst_assignment/
+
 ├── src/
+
 │   ├── agent/
+
 │   │   ├── init.py
-│   │   ├── agent_main.py       # CLI entry point (renamed from agent.py)
+
+│   │   ├── agent_main.py       # CLI entry point
+
 │   │   ├── llm_client.py
+
 │   │   ├── mcp_client.py
+
 │   │   ├── agent_loop.py
+
 │   │   ├── ui.py               # Streamlit web interface
+
 │   │   └── requirements.txt
+
 │   ├── common/
+
 │   │   ├── init.py
+
 │   │   └── prompts.py
+
 │   ├── server/
+
 │   │   ├── server.py
+
 │   │   ├── init_db.py
+
 │   │   └── requirements.txt
+
 │   └── tests/
+
 │       ├── test_agent_end_to_end.py
+
 │       ├── test_llm.py
+
 │       ├── test_readonly.py
+
 │       ├── test_valid_queries.py
+
 │       ├── test_init_db.py
+
 │       └── test_server.py
+
 ├── pyproject.toml
+
 ├── README.md
+
 ├── .gitignore
+
 ├── .env
+
 └── docs/
-└── ui-example.png          # UI screenshot (example)
+
+└── ui-example.png          # UI screenshots
 
 text## Installation
 
