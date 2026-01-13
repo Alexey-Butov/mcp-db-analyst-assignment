@@ -7,10 +7,14 @@ and see the reasoning + result in a friendly interface.
 
 import streamlit as st
 import time
+from dotenv import load_dotenv
+import os
 
-# Import the agent logic (after pip install -e . from root)
-from mcp_db_analyst.agent.agent_loop import run_agent
+# Load environment variables (GROQ_MODEL, MCP_SERVER_URL, etc.)
+load_dotenv()
 
+# Import agent logic — relies on pip install -e . from root
+from agent.agent_loop import run_agent
 
 # ────────────────────────────────────────────────
 # Page configuration
@@ -21,7 +25,6 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded",
 )
-
 
 # ────────────────────────────────────────────────
 # Sidebar – Info & Settings
@@ -46,7 +49,6 @@ with st.sidebar:
         "• Returns clear natural-language answers"
     )
 
-
 # ────────────────────────────────────────────────
 # Main chat interface
 # ────────────────────────────────────────────────
@@ -56,16 +58,13 @@ st.header("Ask a question about the database")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-
 # Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-
 # Input box
 question = st.chat_input("Type your question here... (e.g. מה המוצר הכי נמכר?)")
-
 
 if question:
     # Add user message to history & display
@@ -75,25 +74,26 @@ if question:
 
     # Agent thinking placeholder
     with st.chat_message("assistant"):
-        with st.status("Thinking...", expanded=True) as status:
-            status.update(label="Discovering schema...", state="running")
-            time.sleep(0.4)  # small visual delay for better UX
+        with st.spinner("מחפש תשובה..."):  # nicer loading indicator
+            with st.status("Thinking...", expanded=True) as status:
+                status.update(label="Discovering schema...", state="running")
+                time.sleep(0.4)  # small visual delay for better UX
 
-            try:
-                # Run the full agent
-                answer = run_agent(question.strip())
-
-                status.update(label="Final answer ready", state="complete")
-                st.markdown(answer)
-
-            except Exception as e:
-                status.update(label="Error occurred", state="error")
-                st.error(f"Something went wrong:\n\n{str(e)}")
-                st.caption("Please try rephrasing the question or check server connection.")
+                try:
+                    # Run the full agent
+                    answer = run_agent(question.strip())
+                    status.update(label="Final answer ready", state="complete")
+                    st.markdown(answer)
+                except Exception as e:
+                    status.update(label="Error occurred", state="error")
+                    st.error(f"משהו השתבש:\n\n{str(e)}")
+                    st.caption(
+                        "נסה לנסח מחדש את השאלה או בדוק אם השרת פועל על http://127.0.0.1:8000"
+                    )
 
     # Add assistant response to history
-    st.session_state.messages.append({"role": "assistant", "content": answer})
-
+    if "answer" in locals():  # only if no exception
+        st.session_state.messages.append({"role": "assistant", "content": answer})
 
 # ────────────────────────────────────────────────
 # Footer / quick actions
@@ -105,4 +105,5 @@ with col1:
         st.session_state.messages = []
         st.rerun()
 with col2:
-    st.caption(f"Running on Groq • {GROQ_MODEL}")
+    groq_model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile (default)")
+    st.caption(f"Running on Groq • {groq_model}")

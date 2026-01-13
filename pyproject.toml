@@ -1,6 +1,8 @@
 # pyproject.toml
+# Configuration for packaging, pytest, and coverage (updated for src/ layout)
+
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = ["setuptools>=64.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,22 +11,49 @@ version = "0.1.0"
 description = "MCP-style Database Analyst Agent take-home assignment"
 readme = "README.md"
 requires-python = ">=3.9"
-license = {text = "MIT"}               # optional, but good practice
-authors = [{name = "Alexey Butov"}]    # optional
+license = {text = "MIT"}
+authors = [{name = "Alexey Butov"}]
+keywords = ["llm", "text-to-sql", "mcp", "fastapi", "groq", "sqlite"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 
 [tool.setuptools.packages.find]
-where = ["."]
+where = ["src"]                          # ← Critical: look inside src/ folder
 include = ["agent.*", "common.*", "server.*", "tests.*"]
-exclude = ["*.tests", "*.__pycache__"]   # optional cleanup
+exclude = ["*.tests", "*.__pycache__"]
 
 [tool.pytest.ini_options]
-# Very important: tells pytest where to look for tests and what to consider a test
-testpaths = ["tests"]
+# Test discovery and execution settings
+testpaths = ["src/tests"]                # ← Updated: tests now live in src/tests/
 python_files = ["test_*.py", "*_test.py"]
 python_functions = ["test_*"]
 python_classes = ["Test*"]
-addopts = "-v --tb=short"               # nicer output by default
+addopts = "-v --tb=short --strict-markers"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.coverage.run]
-source = ["agent", "common", "server"]
-omit = ["*/tests/*", "*/__init__.py"]
+# Coverage source and exclusions (updated paths for src/)
+source = ["src/agent", "src/common", "src/server"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "src/agent/ui.py",           # Streamlit UI – bonus, hard to test automatically
+    "src/server/init_db.py",     # One-time setup script
+]
+
+[tool.coverage.report]
+# Coverage report formatting
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "pass",
+]
+fail_under = 30              # Realistic for take-home (core logic ~60–90%)
+show_missing = true

@@ -5,7 +5,7 @@ from groq import Groq
 from dotenv import load_dotenv
 
 # Optional: import your real prompt to make the test more representative
-from mcp_db_analyst_assignment.common.prompts import SYSTEM_PROMPT
+from common.prompts import SYSTEM_PROMPT
 
 load_dotenv()
 

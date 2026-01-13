@@ -4,12 +4,13 @@ Core agent reasoning loop: schema awareness → SQL generation → execution →
 """
 
 import json
+import requests
 from functools import lru_cache
 from typing import Dict, Any
 
 from .llm_client import LLMClient
-from .mcp_client import MCPClient 
-from mcp_db_analyst_assignment.common.prompts import SYSTEM_PROMPT # assumes pip install -e .
+from .mcp_client import MCPClient
+from common.prompts import SYSTEM_PROMPT # assumes pip install -e 
 
 llm = LLMClient()
 mcp = MCPClient()

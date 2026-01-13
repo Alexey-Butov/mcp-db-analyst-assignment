@@ -6,7 +6,7 @@ Orchestrates the agent loop via CLI.
 
 import sys
 
-from .agent_loop import run_agent
+from agent.agent_loop import run_agent
 
 
 def main():
