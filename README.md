@@ -16,6 +16,7 @@ A minimal **MCP-style** natural-language database querying system with two separ
 - Bonus Streamlit web UI
 
 ## Project Structure (src layout)
+
 mcp_db_analyst_assignment/
 ├── src/
 │   ├── agent/
@@ -46,6 +47,7 @@ mcp_db_analyst_assignment/
 ├── .env
 └── docs/
 └── ui-example.png          # UI screenshot (example)
+
 text## Installation
 
 ### Prerequisites
